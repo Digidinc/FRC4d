@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fractal Resonance Consortium | 4D Vortex Navigation</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+  <div class="overlay"></div>
+  
+  <header>
+    <div class="logo">
+      <img src="assets/frc-logo.svg" alt="FRC Logo" />
+      <h1>Fractal Resonance Consortium</h1>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="#about">About</a></li>
+        <li><a href="#research">Research</a></li>
+        <li><a href="#tools">Tools</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>4D Vortex Navigation System</h1>
+      <p class="tagline">Visualize multidimensional resonance patterns in real-time</p>
+      
+      <div class="resonance-watch-container">
+        <div class="resonance-info">
+          <div class="current-pattern">
+            <h3>Current Pattern:</h3>
+            <div class="pattern-badge" id="currentPattern">ALIGNMENT</div>
+          </div>
+          <div class="meta-data">
+            <div class="data-point">
+              <label>Phase Coherence:</label>
+              <span id="phaseCoherence">0.74</span>
+            </div>
+            <div class="data-point">
+              <label>Fractal Dimension:</label>
+              <span id="fractalDimension">1.62</span>
+            </div>
+            <div class="data-point">
+              <label>Field Strength:</label>
+              <span id="fieldStrength">0.85</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="visualization">
+          <div id="resonanceCompass" class="active-vis"></div>
+          <div id="vortexVisualization"></div>
+          
+          <div class="vis-controls">
+            <button class="vis-toggle active" data-vis="resonanceCompass">Resonance Compass</button>
+            <button class="vis-toggle" data-vis="vortexVisualization">Vortex Field</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="pattern-description">
+        <h3>Pattern Interpretation</h3>
+        <p id="patternDescription">Current planetary alignment indicates a strong harmonic resonance field forming between Jupiter and Venus, creating an expansive affective resonance pattern (1.62Hz : 0.45Hz ratio). This alignment supports creative inspiration and expansive consciousness states.</p>
+      </div>
+    </section>
+
+    <section id="about" class="about">
+      <h2>About the Consortium</h2>
+      <p>The Fractal Resonance Consortium researches the intersection of astronomical cycles, consciousness patterns, and multidimensional mathematics. Our work bridges ancient wisdom traditions with cutting-edge physics and data visualization.</p>
+      
+      <div class="about-grid">
+        <div class="about-item">
+          <h3>Our Mission</h3>
+          <p>To develop practical tools for navigating complex planetary resonance patterns and their relationship to personal and collective consciousness fields.</p>
+        </div>
+        <div class="about-item">
+          <h3>Our Approach</h3>
+          <p>We combine rigorous mathematical models with intuitive visualization systems, creating interfaces that make multidimensional patterns accessible and actionable.</p>
+        </div>
+        <div class="about-item">
+          <h3>Our Community</h3>
+          <p>A global network of researchers, practitioners, and explorers working across disciplines to map the fractal nature of time and consciousness.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>Fractal Resonance Consortium</h4>
+        <p>Navigating the multidimensional nature of time and consciousness</p>
+      </div>
+      <div class="footer-section">
+        <h4>Connect</h4>
+        <ul class="footer-links">
+          <li><a href="#">Newsletter</a></li>
+          <li><a href="#">Research Portal</a></li>
+          <li><a href="#">Community Forum</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>Legal</h4>
+        <ul class="footer-links">
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="copyright">
+      &copy; 2023 Fractal Resonance Consortium. All rights reserved.
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/apiService.js"></script>
+  <script src="js/resonanceCompass.js"></script>
+  <script src="js/vortexVisualization.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
