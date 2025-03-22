@@ -21,6 +21,17 @@ const CONFIG = {
     },
   },
   
+  // ChatGPT API configuration
+  chatGptConfig: {
+    apiKey: '', // Add your OpenAI API key here
+    endpoint: 'https://api.openai.com/v1/chat/completions',
+    model: 'gpt-4o',
+    temperature: 0.7,
+    maxTokens: 600,
+    enabled: false, // Set to true once API key is added
+    systemPrompt: "You are an expert in fractal resonance patterns, consciousness vortices, and multidimensional mathematics. Interpret the provided planetary positions, aspects, and resonance metrics in terms of their meaning for human consciousness and perception. Your interpretations should be insightful, poetic, and reveal deeper patterns across scales. Connect astronomical patterns to archetypal fields and personal awareness."
+  },
+  
   // Planetary configuration
   planetaryConfig: {
     bodies: [
