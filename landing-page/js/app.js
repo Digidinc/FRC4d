@@ -1,636 +1,354 @@
 /**
- * Main Application Controller
+ * Main Application
  * Coordinates all components and handles data updates
  */
 class App {
   constructor() {
-    // Load configuration
-    this.config = CONFIG;
+    this.config = window.FRC4D_CONFIG || {};
+    this.updateInterval = this.config.updateInterval || 60000; // Default: 1 minute
+    this.dataTransitionDuration = this.config.dataTransitionDuration || 2000; // Default: 2 seconds
+    this.currentView = 'compass'; // Default view
+    this.intervalId = null;
+    this.isLoading = false;
+    this.lastUpdateTime = null;
     
-    // Create API service
-    this.apiService = new ApiService(this.config);
+    // Visualization components
+    this.resonanceCompass = null;
+    this.vortexVisualization = null;
     
-    // Create interpretation service
-    this.interpretationService = new InterpretationService(this.config);
-    
-    // Data state
-    this.cosmicData = null;
-    this.activeVisualization = 'resonanceCompass';
-    
-    // Bind methods
-    this.handleVisualizationToggle = this.handleVisualizationToggle.bind(this);
-    this.updateData = this.updateData.bind(this);
-    this.updateMetrics = this.updateMetrics.bind(this);
-    this.updateDescription = this.updateDescription.bind(this);
-    this.setupApiKeyForm = this.setupApiKeyForm.bind(this);
-    this.handleApiKeySubmit = this.handleApiKeySubmit.bind(this);
+    // Elements
+    this.elements = {
+      compassViewBtn: document.getElementById('compass-view-btn'),
+      vortexViewBtn: document.getElementById('vortex-view-btn'),
+      compassContainer: document.getElementById('resonance-compass'),
+      vortexContainer: document.getElementById('vortex-visualization'),
+      currentPattern: document.getElementById('current-pattern'),
+      patternIntensity: document.getElementById('pattern-intensity'),
+      phaseCoherence: document.getElementById('phase-coherence'),
+      coherenceTrend: document.getElementById('coherence-trend'),
+      fractalDimension: document.getElementById('fractal-dimension'),
+      dimensionScale: document.getElementById('dimension-scale'),
+      fieldStrength: document.getElementById('field-strength'),
+      fieldType: document.getElementById('field-type'),
+      patternDescription: document.getElementById('pattern-description')
+    };
   }
-  
+
   /**
    * Initialize the application
    */
   async initialize() {
-    console.log('Initializing FRC 4D Resonance Watch Landing Page...');
+    // Initialize environment and API services
+    await this._initializeServices();
     
-    // Load API key from storage
-    this.interpretationService.loadApiKey();
+    // Initialize visualization components
+    this._initializeVisualizations();
     
-    // Create visualization components
-    this.resonanceCompass = new ResonanceCompass(this.config);
-    this.vortexVisualization = new VortexVisualization(this.config);
-    
-    // Set up visualization toggle
-    this.setupVisualizationToggle();
-    
-    // Set up API key form
-    this.setupApiKeyForm();
+    // Setup event listeners
+    this._setupEventListeners();
     
     // Load initial data
+    await this.updateData();
+    
+    // Start update interval
+    this._startUpdateInterval();
+    
+    console.log('FRC 4D Resonance Watch initialized successfully.');
+  }
+
+  /**
+   * Initialize environment and API services
+   * @returns {Promise<void>}
+   */
+  async _initializeServices() {
     try {
-      await this.updateData();
+      // Load environment variables
+      await envLoader.load();
       
-      // Start update interval
-      this.startUpdateInterval();
+      // Initialize API key manager
+      await apiKeyManager.initialize();
       
-      console.log('Initialization complete');
+      // Initialize API service
+      await apiService.initialize();
     } catch (error) {
-      console.error('Error during initialization:', error);
+      console.error('Error initializing services:', error);
     }
   }
-  
+
   /**
-   * Set up visualization toggle buttons
+   * Initialize visualization components
    */
-  setupVisualizationToggle() {
-    const toggleButtons = document.querySelectorAll('.vis-toggle');
-    
-    toggleButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        const targetVis = button.getAttribute('data-target');
-        this.handleVisualizationToggle(targetVis);
-        
-        // Update button states
-        toggleButtons.forEach(btn => {
-          btn.classList.toggle('active', btn.getAttribute('data-target') === targetVis);
-        });
-      });
-    });
-  }
-  
-  /**
-   * Set up API key form and modal
-   */
-  setupApiKeyForm() {
-    // Create API key form modal if it doesn't exist
-    if (!document.getElementById('apiKeyModal')) {
-      this.createApiKeyModal();
-    }
-    
-    // Get form elements
-    const apiKeyForm = document.getElementById('apiKeyForm');
-    const apiKeyInput = document.getElementById('apiKeyInput');
-    const apiKeyModal = document.getElementById('apiKeyModal');
-    const openApiKeyBtn = document.getElementById('openApiKeyModal');
-    const closeApiKeyBtn = document.getElementById('closeApiKeyModal');
-    const apiKeyStatus = document.getElementById('apiKeyStatus');
-    
-    // Set initial form values
-    if (apiKeyInput && this.interpretationService.apiKey) {
-      apiKeyInput.value = this.interpretationService.apiKey;
-      if (apiKeyStatus) {
-        apiKeyStatus.textContent = 'API Key: Configured';
-        apiKeyStatus.classList.add('status-configured');
-      }
-    }
-    
-    // Add event listeners
-    if (apiKeyForm) {
-      apiKeyForm.addEventListener('submit', this.handleApiKeySubmit);
-    }
-    
-    if (openApiKeyBtn) {
-      openApiKeyBtn.addEventListener('click', () => {
-        apiKeyModal.style.display = 'flex';
-      });
-    }
-    
-    if (closeApiKeyBtn) {
-      closeApiKeyBtn.addEventListener('click', () => {
-        apiKeyModal.style.display = 'none';
-      });
-    }
-    
-    // Close modal when clicking outside
-    window.addEventListener('click', (event) => {
-      if (event.target === apiKeyModal) {
-        apiKeyModal.style.display = 'none';
-      }
-    });
-  }
-  
-  /**
-   * Create API key modal dialog
-   */
-  createApiKeyModal() {
-    const modal = document.createElement('div');
-    modal.id = 'apiKeyModal';
-    modal.className = 'modal';
-    
-    modal.innerHTML = `
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>Configure ChatGPT API</h3>
-          <button id="closeApiKeyModal" class="close-button">&times;</button>
-        </div>
-        <div class="modal-body">
-          <p>Enter your OpenAI API key to enable ChatGPT-4o interpretations of the resonance patterns. Your API key will be stored locally in your browser.</p>
-          <form id="apiKeyForm">
-            <div class="form-group">
-              <label for="apiKeyInput">API Key:</label>
-              <input type="password" id="apiKeyInput" placeholder="sk-..." required>
-            </div>
-            <div class="button-group">
-              <button type="submit" class="submit-button">Save API Key</button>
-              <button type="button" id="clearApiKey" class="clear-button">Clear API Key</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    `;
-    
-    document.body.appendChild(modal);
-    
-    // Add clear API key button event
-    const clearApiKeyBtn = document.getElementById('clearApiKey');
-    if (clearApiKeyBtn) {
-      clearApiKeyBtn.addEventListener('click', () => {
-        this.interpretationService.clearApiKey();
-        const apiKeyInput = document.getElementById('apiKeyInput');
-        if (apiKeyInput) {
-          apiKeyInput.value = '';
-        }
-        const apiKeyStatus = document.getElementById('apiKeyStatus');
-        if (apiKeyStatus) {
-          apiKeyStatus.textContent = 'API Key: Not Configured';
-          apiKeyStatus.classList.remove('status-configured');
-        }
-        
-        // Update pattern description with default description
-        if (this.cosmicData) {
-          this.updateDescription();
-        }
-      });
-    }
-    
-    // Add API key config button to UI
-    const patternDescription = document.querySelector('.pattern-description');
-    if (patternDescription) {
-      const apiKeyButton = document.createElement('div');
-      apiKeyButton.className = 'api-key-config';
-      apiKeyButton.innerHTML = `
-        <button id="openApiKeyModal" class="api-key-button">Configure ChatGPT API</button>
-        <span id="apiKeyStatus" class="api-key-status">API Key: Not Configured</span>
-      `;
-      patternDescription.appendChild(apiKeyButton);
-    }
-    
-    // Add modal styles
-    if (!document.getElementById('modalStyles')) {
-      const styles = document.createElement('style');
-      styles.id = 'modalStyles';
-      styles.textContent = `
-        .modal {
-          display: none;
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-color: rgba(0, 0, 0, 0.8);
-          align-items: center;
-          justify-content: center;
-          z-index: 1000;
-        }
-        
-        .modal-content {
-          background-color: var(--color-background-lighter);
-          border: 1px solid var(--color-border);
-          border-radius: 0.5rem;
-          width: 90%;
-          max-width: 500px;
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-        
-        .modal-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 1rem;
-          border-bottom: 1px solid var(--color-border);
-        }
-        
-        .modal-header h3 {
-          margin: 0;
-          color: var(--color-accent);
-        }
-        
-        .close-button {
-          background: none;
-          border: none;
-          color: var(--color-text);
-          font-size: 1.5rem;
-          cursor: pointer;
-        }
-        
-        .modal-body {
-          padding: 1.5rem;
-        }
-        
-        .form-group {
-          margin-bottom: 1.5rem;
-        }
-        
-        .form-group label {
-          display: block;
-          margin-bottom: 0.5rem;
-        }
-        
-        .form-group input {
-          width: 100%;
-          padding: 0.75rem;
-          border-radius: 0.25rem;
-          border: 1px solid var(--color-border);
-          background-color: rgba(0, 0, 0, 0.2);
-          color: var(--color-text);
-          font-family: monospace;
-        }
-        
-        .button-group {
-          display: flex;
-          gap: 1rem;
-        }
-        
-        .submit-button, .clear-button {
-          padding: 0.75rem 1.5rem;
-          border-radius: 0.25rem;
-          cursor: pointer;
-          border: none;
-        }
-        
-        .submit-button {
-          background-color: var(--color-primary);
-          color: white;
-        }
-        
-        .clear-button {
-          background-color: rgba(255, 59, 48, 0.7);
-          color: white;
-        }
-        
-        .api-key-config {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-top: 1rem;
-          padding-top: 1rem;
-          border-top: 1px solid var(--color-border);
-        }
-        
-        .api-key-button {
-          background-color: var(--color-primary);
-          color: white;
-          border: none;
-          padding: 0.5rem 1rem;
-          border-radius: 0.25rem;
-          cursor: pointer;
-        }
-        
-        .api-key-status {
-          font-size: 0.8rem;
-          opacity: 0.8;
-        }
-        
-        .status-configured {
-          color: var(--jupiter-color);
-        }
-        
-        .interpretation-loading {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          height: 3rem;
-          margin-top: 1rem;
-        }
-        
-        .spinner {
-          width: 1.5rem;
-          height: 1.5rem;
-          border: 3px solid rgba(255, 255, 255, 0.3);
-          border-radius: 50%;
-          border-top-color: var(--color-accent);
-          animation: spin 1s ease-in-out infinite;
-          margin-right: 1rem;
-        }
-        
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-      `;
-      document.head.appendChild(styles);
-    }
-  }
-  
-  /**
-   * Handle API key form submission
-   * @param {Event} event - Form submission event
-   */
-  handleApiKeySubmit(event) {
-    event.preventDefault();
-    
-    const apiKeyInput = document.getElementById('apiKeyInput');
-    const apiKeyModal = document.getElementById('apiKeyModal');
-    const apiKeyStatus = document.getElementById('apiKeyStatus');
-    
-    if (apiKeyInput && apiKeyInput.value) {
-      // Update API key in service
-      this.interpretationService.updateApiKey(apiKeyInput.value);
-      
-      // Update UI
-      if (apiKeyStatus) {
-        apiKeyStatus.textContent = 'API Key: Configured';
-        apiKeyStatus.classList.add('status-configured');
-      }
-      
-      // Close modal
-      if (apiKeyModal) {
-        apiKeyModal.style.display = 'none';
-      }
-      
-      // Update description with AI interpretation
-      if (this.cosmicData) {
-        this.updateDescription(true);
-      }
-    }
-  }
-  
-  /**
-   * Handle visualization toggle
-   * @param {string} visId - Visualization ID to activate
-   */
-  handleVisualizationToggle(visId) {
-    if (this.activeVisualization === visId) return;
-    
-    // Store active visualization
-    this.activeVisualization = visId;
-    
-    // Update visualization visibility
-    const visualizations = ['resonanceCompass', 'vortexVisualization'];
-    
-    visualizations.forEach(vis => {
-      const element = document.getElementById(vis);
-      if (element) {
-        element.classList.toggle('active-vis', vis === visId);
-      }
+  _initializeVisualizations() {
+    // Initialize Resonance Compass
+    this.resonanceCompass = new ResonanceCompass({
+      container: this.elements.compassContainer,
+      config: this.config
     });
     
-    // Initialize the visualization if it's active
-    if (visId === 'resonanceCompass' && this.cosmicData) {
-      this.resonanceCompass.update(this.cosmicData);
-    } else if (visId === 'vortexVisualization' && this.cosmicData) {
-      this.vortexVisualization.update(this.cosmicData);
+    // Initialize Vortex Visualization
+    this.vortexVisualization = new VortexVisualization({
+      container: this.elements.vortexContainer,
+      config: this.config
+    });
+  }
+
+  /**
+   * Setup event listeners
+   */
+  _setupEventListeners() {
+    // View selection buttons
+    this.elements.compassViewBtn.addEventListener('click', () => this.switchView('compass'));
+    this.elements.vortexViewBtn.addEventListener('click', () => this.switchView('vortex'));
+    
+    // Window resize event
+    window.addEventListener('resize', this._handleResize.bind(this));
+  }
+
+  /**
+   * Handle window resize
+   */
+  _handleResize() {
+    if (this.resonanceCompass) {
+      this.resonanceCompass.resize();
+    }
+    
+    if (this.vortexVisualization) {
+      this.vortexVisualization.resize();
     }
   }
-  
+
   /**
-   * Start data update interval
+   * Switch between visualization views
+   * @param {string} view - View to switch to ('compass' or 'vortex')
    */
-  startUpdateInterval() {
+  switchView(view) {
+    if (view === this.currentView) return;
+    
+    this.currentView = view;
+    
+    // Update button active states
+    this.elements.compassViewBtn.classList.toggle('active', view === 'compass');
+    this.elements.vortexViewBtn.classList.toggle('active', view === 'vortex');
+    
+    // Show/hide containers
+    this.elements.compassContainer.classList.toggle('hidden', view !== 'compass');
+    this.elements.vortexContainer.classList.toggle('hidden', view !== 'vortex');
+    
+    // Trigger resize on the now-visible visualization
+    if (view === 'compass' && this.resonanceCompass) {
+      this.resonanceCompass.resize();
+    } else if (view === 'vortex' && this.vortexVisualization) {
+      this.vortexVisualization.resize();
+    }
+  }
+
+  /**
+   * Start automatic data update interval
+   */
+  _startUpdateInterval() {
     // Clear any existing interval
-    if (this.updateInterval) {
-      clearInterval(this.updateInterval);
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
     }
     
     // Set new interval
-    this.updateInterval = setInterval(
-      this.updateData,
-      this.config.generalConfig.updateInterval
-    );
+    this.intervalId = setInterval(() => this.updateData(), this.updateInterval);
   }
-  
+
   /**
-   * Update cosmic resonance data
+   * Update data from API
+   * @returns {Promise<void>}
    */
   async updateData() {
+    if (this.isLoading) return;
+    
+    this.isLoading = true;
+    
     try {
-      // Fetch new data
-      const newData = await this.apiService.getCosmicResonanceData();
+      // Get planetary positions
+      const planetaryData = await apiService.getPlanetaryPositions();
       
-      // Store data
-      this.cosmicData = newData;
+      // Get aspects
+      const aspectsData = await apiService.getAspects();
       
-      // Update UI metrics
-      this.updateMetrics();
+      // Get resonance patterns
+      const resonanceData = await apiService.getResonancePatterns();
       
-      // Update description
-      this.updateDescription();
+      // Get phase synchronization
+      const phaseData = await apiService.getPhaseSynchronization();
       
-      // Update active visualization
-      if (this.activeVisualization === 'resonanceCompass') {
-        this.resonanceCompass.update(newData);
-      } else if (this.activeVisualization === 'vortexVisualization') {
-        this.vortexVisualization.update(newData);
+      // Get fractal dimension
+      const dimensionData = await apiService.getFractalDimension();
+      
+      // Combine all data
+      const combinedData = {
+        planets: planetaryData,
+        aspects: aspectsData,
+        patterns: resonanceData,
+        phase: phaseData,
+        dimension: dimensionData,
+        timestamp: new Date()
+      };
+      
+      // Update visualizations with new data
+      this._updateVisualizations(combinedData);
+      
+      // Update metrics display
+      this._updateMetrics(combinedData);
+      
+      // Get AI interpretation if API key is available
+      if (apiKeyManager.hasKey('openai')) {
+        this._updateInterpretation(combinedData);
       }
+      
+      // Record last update time
+      this.lastUpdateTime = new Date();
+      
     } catch (error) {
       console.error('Error updating data:', error);
+    } finally {
+      this.isLoading = false;
     }
   }
-  
+
   /**
-   * Update UI metrics
+   * Update visualizations with new data
+   * @param {Object} data - Combined resonance data
    */
-  updateMetrics() {
-    if (!this.cosmicData) return;
-    
-    // Get elements
-    const patternBadge = document.getElementById('patternBadge');
-    const phaseCoherence = document.getElementById('phaseCoherence');
-    const fractalDimension = document.getElementById('fractalDimension');
-    const fieldStrength = document.getElementById('fieldStrength');
-    
-    // Update pattern badge
-    if (patternBadge) {
-      patternBadge.textContent = this.cosmicData.resonancePattern.id;
-      
-      // Remove all pattern classes
-      const patterns = this.config.patternRecognitionConfig.patterns.map(p => p.id.toLowerCase());
-      patterns.forEach(pattern => {
-        patternBadge.classList.remove(`pattern-${pattern}`);
-      });
-      
-      // Add current pattern class
-      patternBadge.classList.add(`pattern-${this.cosmicData.resonancePattern.id.toLowerCase()}`);
+  _updateVisualizations(data) {
+    // Update Resonance Compass
+    if (this.resonanceCompass) {
+      this.resonanceCompass.updateData(data);
     }
     
-    // Update metrics with animation
-    this.animateValue(
-      phaseCoherence, 
-      parseFloat(phaseCoherence.textContent), 
-      this.cosmicData.phaseSynchronization.phaseCoherence, 
-      2
-    );
-    
-    this.animateValue(
-      fractalDimension, 
-      parseFloat(fractalDimension.textContent), 
-      this.cosmicData.fractalDimension, 
-      2
-    );
-    
-    this.animateValue(
-      fieldStrength, 
-      parseInt(fieldStrength.textContent), 
-      Math.round(this.cosmicData.resonancePattern.strength * 100), 
-      0,
-      '%'
-    );
+    // Update Vortex Visualization
+    if (this.vortexVisualization) {
+      this.vortexVisualization.updateData(data);
+    }
   }
-  
+
   /**
-   * Update pattern description
-   * @param {boolean} forceAiUpdate - Force AI interpretation update
+   * Update metrics display with new data
+   * @param {Object} data - Combined resonance data
    */
-  async updateDescription(forceAiUpdate = false) {
-    if (!this.cosmicData) return;
+  _updateMetrics(data) {
+    // Extract data
+    const { patterns, phase, dimension } = data;
     
-    const patternDescription = document.getElementById('patternDescription');
-    if (!patternDescription) return;
+    // Update pattern information
+    if (patterns && patterns.currentPattern) {
+      this._animateTextChange(this.elements.currentPattern, patterns.currentPattern.name);
+      this._animateTextChange(this.elements.patternIntensity, `Intensity: ${Math.round(patterns.currentPattern.intensity * 100)}%`);
+    }
     
-    // Only generate AI interpretation if API key is configured or force update is requested
-    if (this.interpretationService.isConfigured() || forceAiUpdate) {
-      // Show loading indicator
-      this.showDescriptionLoading(patternDescription);
+    // Update phase coherence
+    if (phase && phase.coherence) {
+      this._animateNumberChange(this.elements.phaseCoherence, phase.coherence.toFixed(2));
       
-      try {
-        // Get AI interpretation
-        const interpretation = await this.interpretationService.getInterpretation(this.cosmicData);
-        
-        // Update description
-        patternDescription.textContent = interpretation;
-      } catch (error) {
-        console.error('Error getting interpretation:', error);
-        patternDescription.textContent = this.cosmicData.resonancePattern.description;
-      } finally {
-        // Hide loading indicator
-        this.hideDescriptionLoading(patternDescription);
+      const trendSymbol = phase.coherenceTrend > 0 ? '↑' : phase.coherenceTrend < 0 ? '↓' : '–';
+      this._animateTextChange(this.elements.coherenceTrend, `${trendSymbol} ${Math.abs(phase.coherenceTrend).toFixed(2)}`);
+    }
+    
+    // Update fractal dimension
+    if (dimension && dimension.value) {
+      this._animateNumberChange(this.elements.fractalDimension, dimension.value.toFixed(2));
+      this._animateTextChange(this.elements.dimensionScale, `Scale: 10^${dimension.scale}`);
+    }
+    
+    // Update field strength
+    if (patterns && patterns.fieldStrength) {
+      this._animateNumberChange(this.elements.fieldStrength, patterns.fieldStrength.toFixed(2));
+      this._animateTextChange(this.elements.fieldType, patterns.fieldType || 'Resonance Units');
+    }
+  }
+
+  /**
+   * Get and update AI interpretation of data
+   * @param {Object} data - Combined resonance data
+   */
+  async _updateInterpretation(data) {
+    try {
+      // Get AI interpretation
+      const interpretation = await apiService.getAIInterpretation(data);
+      
+      // Update interpretation text
+      if (interpretation && interpretation.interpretation) {
+        this._animateTextChange(this.elements.patternDescription, interpretation.interpretation);
       }
-    } else {
-      // Use default description
-      patternDescription.textContent = this.cosmicData.resonancePattern.description;
+    } catch (error) {
+      console.error('Error updating interpretation:', error);
     }
   }
-  
+
   /**
-   * Show loading indicator for description
-   * @param {Element} descriptionElement - Description element
+   * Animate text change with fade transition
+   * @param {HTMLElement} element - Element to update
+   * @param {string} newText - New text content
    */
-  showDescriptionLoading(descriptionElement) {
-    // Save original text
-    descriptionElement.dataset.originalText = descriptionElement.textContent;
-    
-    // Create loading indicator if it doesn't exist
-    let loadingIndicator = document.querySelector('.interpretation-loading');
-    if (!loadingIndicator) {
-      loadingIndicator = document.createElement('div');
-      loadingIndicator.className = 'interpretation-loading';
-      loadingIndicator.innerHTML = '<div class="spinner"></div><span>Generating AI interpretation...</span>';
-      descriptionElement.parentNode.insertBefore(loadingIndicator, descriptionElement.nextSibling);
-    } else {
-      loadingIndicator.style.display = 'flex';
-    }
-    
-    // Hide description temporarily
-    descriptionElement.style.opacity = '0.5';
-  }
-  
-  /**
-   * Hide loading indicator for description
-   * @param {Element} descriptionElement - Description element
-   */
-  hideDescriptionLoading(descriptionElement) {
-    // Hide loading indicator
-    const loadingIndicator = document.querySelector('.interpretation-loading');
-    if (loadingIndicator) {
-      loadingIndicator.style.display = 'none';
-    }
-    
-    // Show description
-    descriptionElement.style.opacity = '1';
-  }
-  
-  /**
-   * Animate value change
-   * @param {Element} element - DOM element to update
-   * @param {number} start - Start value
-   * @param {number} end - End value
-   * @param {number} decimals - Number of decimal places
-   * @param {string} suffix - Optional suffix to append
-   */
-  animateValue(element, start, end, decimals = 0, suffix = '') {
+  _animateTextChange(element, newText) {
     if (!element) return;
     
-    // Ensure start is a number
-    start = isNaN(start) ? 0 : start;
+    // Don't animate if text hasn't changed
+    if (element.textContent === newText) return;
     
-    // Animation duration in ms
-    const duration = this.config.generalConfig.dataTransitionDuration;
+    // Create transition effect
+    element.style.transition = `opacity ${this.dataTransitionDuration / 2000}s ease-in-out`;
+    element.style.opacity = 0;
+    
+    // Update text after fade out
+    setTimeout(() => {
+      element.textContent = newText;
+      element.style.opacity = 1;
+    }, this.dataTransitionDuration / 2);
+  }
+
+  /**
+   * Animate number change with counting effect
+   * @param {HTMLElement} element - Element to update
+   * @param {string} newValue - New number value as string
+   */
+  _animateNumberChange(element, newValue) {
+    if (!element) return;
+    
+    const currentValue = parseFloat(element.textContent);
+    const targetValue = parseFloat(newValue);
+    
+    // Don't animate if value hasn't changed
+    if (currentValue === targetValue) return;
+    
     const startTime = performance.now();
+    const duration = this.dataTransitionDuration;
     
-    // Animation function
-    const updateValue = (timestamp) => {
-      // Calculate progress
+    // Animation frame function
+    const updateFrame = (timestamp) => {
       const elapsed = timestamp - startTime;
       const progress = Math.min(elapsed / duration, 1);
       
+      // Easing function (ease-out cubic)
+      const easedProgress = 1 - Math.pow(1 - progress, 3);
+      
       // Calculate current value
-      const value = start + (end - start) * progress;
+      const currentVal = currentValue + (targetValue - currentValue) * easedProgress;
       
-      // Format value
-      const formatted = value.toFixed(decimals) + suffix;
-      
-      // Update element
-      element.textContent = formatted;
+      // Update element with formatted value
+      element.textContent = currentVal.toFixed(2);
       
       // Continue animation if not complete
       if (progress < 1) {
-        requestAnimationFrame(updateValue);
+        requestAnimationFrame(updateFrame);
+      } else {
+        // Ensure final value is exactly as specified
+        element.textContent = newValue;
       }
     };
     
     // Start animation
-    requestAnimationFrame(updateValue);
-  }
-  
-  /**
-   * Clean up resources
-   */
-  cleanup() {
-    // Clear update interval
-    if (this.updateInterval) {
-      clearInterval(this.updateInterval);
-    }
-    
-    // Clean up visualizations
-    if (this.vortexVisualization) {
-      this.vortexVisualization.cleanup();
-    }
+    requestAnimationFrame(updateFrame);
   }
 }
 
-// Initialize app when DOM is loaded
+// Initialize application when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
   const app = new App();
   app.initialize();
-  
-  // Store app instance for potential cleanup
-  window.resonanceApp = app;
 });
