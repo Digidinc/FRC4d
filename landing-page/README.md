@@ -1,91 +1,109 @@
-# FRC 4D Resonance - Landing Page
+# FRC 4D Resonance Watch Landing Page
 
-This directory contains the landing page for fractalresonance.com, featuring an impressive cosmic resonance watch visualization that showcases the FRC 4D Resonance technology in action.
+An immersive cosmic resonance visualization for the fractalresonance.com landing page, showcasing the FRC 4D Resonance Technology.
 
 ## Features
 
-The landing page includes:
-
-- **Cosmic Resonance Watch** - A real-time visualization of current planetary resonance patterns
+- **Real-time Resonance Visualization**: Display current planetary positions and resonance patterns
 - **Dual Visualization Modes**:
-  - **2D Resonance Compass** - Shows planetary positions and aspects with a zodiac reference
-  - **3D Vortex Visualization** - Shows a dynamic 3D representation of the current resonance field
-- **Real-time Pattern Recognition** - Identifies and displays the current resonance pattern
-- **Resonance Metrics** - Shows phase coherence, fractal dimension, and field strength
-- **Pattern Description** - Provides interpretation of the current planetary alignment
-- **ChatGPT-4o Integration** - Generate AI-powered interpretations of resonance patterns
+  - Resonance Compass (2D): Shows planetary positions and aspects
+  - Vortex Visualization (3D): Displays dynamic resonance field in 3D space
+- **Pattern Recognition**: Identifies and names current resonance patterns
+- **Metrics Display**: Shows phase coherence, fractal dimension, and field strength
+- **AI-Powered Interpretation**: Uses ChatGPT-4o to provide meaningful insights on current resonance patterns
 
 ## Technical Details
 
-The landing page is built with standard web technologies:
+- **Frontend**: Pure HTML5, CSS3, and JavaScript (no frameworks)
+- **3D Visualization**: Three.js for vortex visualization
+- **2D Visualization**: Canvas API for resonance compass
+- **Responsive Design**: Works on desktop and mobile devices
+- **Data Source**: Uses mock data by default, can connect to Astronomical Service API
 
-- **HTML5** - For structure and content
-- **CSS3** - For styling and animations
-- **JavaScript** - For interactivity and data handling
-- **D3.js** - For the 2D resonance compass visualization
-- **Three.js** - For the 3D vortex visualization
-- **OpenAI API** - For AI-powered pattern interpretations
+## Setup & Usage
+
+### Installation
+
+1. Clone the repository
+2. Navigate to the `landing-page` directory
+3. Open `index.html` in a browser or serve with a local server
+
+### Environment Configuration
+
+The application uses environment variables for API keys:
+
+1. Create a `.env` file in the landing-page directory based on `.env.example`
+2. Add your API keys:
+   ```
+   OPENAI_API_KEY=your_openai_api_key_here
+   ASTRO_SERVICE_API_KEY=your_astro_service_api_key_here
+   ```
+3. The `.env` file is not committed to the repository (it's in `.gitignore`)
+
+### Configuration Options
+
+The application has a comprehensive configuration system in `js/config.js`:
+
+- **API Endpoints**: Configure URLs for the Astronomical Service API
+- **Visualization Settings**: Customize appearance and behavior of visualizations
+- **Planetary Data**: Configure planets, their colors, sizes, and frequencies
+- **Aspect Configuration**: Define aspects and their properties
+- **Mock Data**: Default mock data for testing without API
+
+### Using Real-Time Data
+
+To use real astronomical data instead of mock data:
+
+1. Set `useMockData: false` in `js/config.js`
+2. Ensure your Astronomical Service API is running
+3. Add your API key to the `.env` file
+
+### Using AI Interpretation
+
+The resonance watch includes AI-powered interpretation of patterns:
+
+1. Add your OpenAI API key to the `.env` file
+2. The system will automatically detect and use your API key
+3. If no key is available, the application will use pre-generated interpretations
 
 ## Implementation
 
-The landing page utilizes the Astronomical Service API to fetch real-time planetary positions and calculate resonance patterns. By default, it uses mock data for demonstration purposes.
+### Core Files
 
-### Key Components
+- `index.html`: Main HTML structure
+- `styles.css`: All styling and responsive design
+- `js/config.js`: Configuration options and mock data
+- `js/envLoader.js`: Environment variables loader
+- `js/apiKeyManager.js`: Secure API key handling
+- `js/api.js`: API service to fetch data
+- `js/app.js`: Main application controller
+- `js/resonanceCompass.js`: 2D visualization
+- `js/vortexVisualization.js`: 3D visualization
+- `assets/logo.svg`: FRC logo
 
-1. **`config.js`** - Configuration settings for the application
-2. **`api.js`** - Handles communication with the Astronomical Service API
-3. **`resonanceCompass.js`** - Creates the 2D circular visualization
-4. **`vortexVisualization.js`** - Creates the 3D vortex visualization
-5. **`interpretationService.js`** - Handles AI interpretations of resonance patterns
-6. **`app.js`** - Main controller coordinating all components
+### Security Considerations
 
-### ChatGPT-4o Integration
-
-The landing page includes integration with OpenAI's ChatGPT-4o for advanced interpretations of resonance patterns:
-
-1. **API Key Configuration** - Users can add their own OpenAI API key through a modal interface
-2. **Enhanced Interpretations** - AI-generated insights about the current resonance pattern
-3. **Caching System** - Caches interpretations to minimize API calls
-4. **Secure Storage** - API keys are stored locally in the browser's localStorage
-5. **Fallback Mechanism** - Uses default descriptions when ChatGPT is not configured
-
-To configure ChatGPT integration:
-
-1. Click the "Configure ChatGPT API" button below the pattern description
-2. Enter your OpenAI API key in the modal dialog
-3. Click "Save API Key"
-
-The AI will provide deeper insights into:
-- The significance of current planetary alignments for consciousness
-- How the fractal dimension shapes experience
-- The meaning of the current pattern in relation to personal and collective fields
-- Practical ways to navigate this resonance pattern
-
-### Mathematical Foundations
-
-The visualization is based on the core mathematical principles from the FRC 4D Resonance framework:
-
-- **Phase Synchronization Equation**: `dθᵢ/dt = ωᵢ + ∑ⱼKᵢⱼsin(θⱼ-θᵢ)`
-- **Fractal Dimension Calculation**: `D = log(N(ε))/log(1/ε)`
-
-## Deployment
-
-To deploy this landing page:
-
-1. Upload all files to your web server
-2. Configure the Astronomical Service API endpoint in `js/config.js`
-3. Set `useMockData` to `false` in `js/config.js` to use live data
-4. Optionally add your OpenAI API key in the ChatGPT configuration section
+- API keys are never committed to the repository
+- Keys are stored securely in the browser's localStorage
+- Environment variables are loaded at runtime
+- A visual interface for entering API keys is provided when needed
 
 ## Development
 
-For local development:
+### Adding New Features
 
-1. Clone the repository
-2. Serve the directory using a local web server
-3. Modify `js/config.js` to adjust visualization parameters
-4. To test AI interpretations, set your OpenAI API key in the interface or directly in config.js
+- Add new visualization modes in the visualization modules
+- Extend the API service for new data endpoints
+- Modify the configuration for different visualization parameters
 
-## Integration
+### Extending the API Key Manager
 
-This landing page is designed to work with the FRC 4D Resonance Tool suite and can be integrated with the full application when ready.
+The API key manager is designed to be extensible:
+
+1. Add new key entries to `.env.example`
+2. Update the `apiKeyManager.js` to recognize new key types
+3. Update the UI prompt to include the new keys
+
+## License
+
+© 2025 Fractal Resonance Consortium. All rights reserved.
