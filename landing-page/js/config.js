@@ -1,184 +1,282 @@
 /**
- * Configuration for the FRC 4D Resonance Watch Landing Page
+ * FRC 4D Resonance Watch Configuration
  */
-const CONFIG = {
+window.FRC4D_CONFIG = {
   // General configuration
-  generalConfig: {
-    useMockData: true, // Set to false to use real astronomical data
-    updateInterval: 5000, // Update interval in milliseconds
-    dataTransitionDuration: 1000, // Duration of transitions when data updates
-  },
+  useMockData: true, // Set to false to use real API data
+  updateInterval: 60000, // Data update interval in milliseconds (1 minute)
+  dataTransitionDuration: 2000, // Duration for data transitions in milliseconds
   
   // API configuration
-  apiConfig: {
-    baseUrl: '/services/astronomical-service/api', // Path to the Astronomical Service API
+  api: {
+    baseUrl: 'https://api.fractalresonance.com',
     endpoints: {
       planetaryPositions: '/planets/positions',
-      aspects: '/aspects/current',
-      resonancePatterns: '/calculations/resonance-patterns',
+      aspects: '/planets/aspects',
+      resonancePatterns: '/patterns/current',
       phaseSynchronization: '/calculations/phase-sync',
-      fractalDimension: '/calculations/fractal-dimension',
-    },
+      fractalDimension: '/calculations/fractal-dimension'
+    }
   },
   
-  // ChatGPT API configuration
-  chatGptConfig: {
-    apiKey: '', // Add your OpenAI API key here
+  // ChatGPT API configuration (no key - will be loaded from environment)
+  chatGPT: {
     endpoint: 'https://api.openai.com/v1/chat/completions',
     model: 'gpt-4o',
     temperature: 0.7,
-    maxTokens: 600,
-    enabled: false, // Set to true once API key is added
-    systemPrompt: "You are an expert in fractal resonance patterns, consciousness vortices, and multidimensional mathematics. Interpret the provided planetary positions, aspects, and resonance metrics in terms of their meaning for human consciousness and perception. Your interpretations should be insightful, poetic, and reveal deeper patterns across scales. Connect astronomical patterns to archetypal fields and personal awareness."
+    maxTokens: 500,
+    systemPrompt: 'You are an expert in interpreting 4D fractal resonance patterns. Analyze the provided data and explain the significance of current planetary alignments, resonance patterns, and phase relationships in an insightful, mystical yet scientifically grounded manner. Use the language of the Fractal Resonance Consortium, referring to vortex patterns, phase coherence, fractal connections, and resonance fields. Avoid using generic astrological language. Instead, focus on the mathematical relationships, phase dynamics, and multi-dimensional aspects of the current cosmic configuration. Your interpretation should be profound, precise, and illuminating, helping the user navigate the current 4D resonance field.'
   },
   
-  // Planetary configuration
-  planetaryConfig: {
-    bodies: [
-      { id: 'sun', name: 'Sun', color: '#ffcf6f', baseFrequency: 1.0, orbitRadius: 0 },
-      { id: 'moon', name: 'Moon', color: '#dbdbdb', baseFrequency: 13.37, orbitRadius: 20 },
-      { id: 'mercury', name: 'Mercury', color: '#a0a0a0', baseFrequency: 8.97, orbitRadius: 35 },
-      { id: 'venus', name: 'Venus', color: '#e8bc8e', baseFrequency: 1.62, orbitRadius: 50 },
-      { id: 'mars', name: 'Mars', color: '#e34a33', baseFrequency: 12.34, orbitRadius: 80 },
-      { id: 'jupiter', name: 'Jupiter', color: '#e9a347', baseFrequency: 0.89, orbitRadius: 110 },
-      { id: 'saturn', name: 'Saturn', color: '#c7a97e', baseFrequency: 0.36, orbitRadius: 140 },
-      { id: 'uranus', name: 'Uranus', color: '#b2d3e8', baseFrequency: 0.12, orbitRadius: 170 },
-      { id: 'neptune', name: 'Neptune', color: '#5b7ebd', baseFrequency: 0.06, orbitRadius: 200 },
-      { id: 'pluto', name: 'Pluto', color: '#9c7a99', baseFrequency: 0.04, orbitRadius: 230 }
-    ]
+  // Planetary bodies configuration
+  planets: {
+    sun: { 
+      name: 'Sun', 
+      color: '#ffcc00', 
+      size: 25,
+      baseFrequency: 1.0
+    },
+    moon: { 
+      name: 'Moon', 
+      color: '#d9d9d9', 
+      size: 15,
+      baseFrequency: 13.37
+    },
+    mercury: { 
+      name: 'Mercury', 
+      color: '#a66a00', 
+      size: 8,
+      baseFrequency: 8.97
+    },
+    venus: { 
+      name: 'Venus', 
+      color: '#ff9966', 
+      size: 12,
+      baseFrequency: 1.62
+    },
+    mars: { 
+      name: 'Mars', 
+      color: '#cc3300', 
+      size: 10,
+      baseFrequency: 0.53
+    },
+    jupiter: { 
+      name: 'Jupiter', 
+      color: '#ffaa33', 
+      size: 20,
+      baseFrequency: 0.08
+    },
+    saturn: { 
+      name: 'Saturn', 
+      color: '#ffcc99', 
+      size: 18,
+      baseFrequency: 0.03
+    },
+    uranus: { 
+      name: 'Uranus', 
+      color: '#99ccff', 
+      size: 16,
+      baseFrequency: 0.01
+    },
+    neptune: { 
+      name: 'Neptune', 
+      color: '#3366ff', 
+      size: 16,
+      baseFrequency: 0.006
+    },
+    pluto: { 
+      name: 'Pluto', 
+      color: '#663366', 
+      size: 6,
+      baseFrequency: 0.004
+    }
   },
   
-  // Aspect configuration
-  aspectConfig: {
-    types: [
-      { name: 'conjunction', angle: 0, orb: 8, color: '#ff9500', lineWidth: 2 },
-      { name: 'opposition', angle: 180, orb: 8, color: '#ff3b30', lineWidth: 2 },
-      { name: 'trine', angle: 120, orb: 6, color: '#4cd964', lineWidth: 2 },
-      { name: 'square', angle: 90, orb: 6, color: '#ff3b30', lineWidth: 1.5 },
-      { name: 'sextile', angle: 60, orb: 5, color: '#34aadc', lineWidth: 1.5 }
-    ]
+  // Aspects configuration
+  aspects: {
+    conjunction: { name: 'Conjunction', angle: 0, orb: 8, color: '#ffcc00' },
+    opposition: { name: 'Opposition', angle: 180, orb: 8, color: '#cc3300' },
+    trine: { name: 'Trine', angle: 120, orb: 8, color: '#4caf50' },
+    square: { name: 'Square', angle: 90, orb: 7, color: '#f44336' },
+    sextile: { name: 'Sextile', angle: 60, orb: 6, color: '#2196f3' },
+    quincunx: { name: 'Quincunx', angle: 150, orb: 5, color: '#ff9800' },
+    semisextile: { name: 'Semisextile', angle: 30, orb: 5, color: '#9c27b0' },
+    semisquare: { name: 'Semisquare', angle: 45, orb: 4, color: '#e91e63' },
+    sesquisquare: { name: 'Sesquisquare', angle: 135, orb: 4, color: '#795548' }
   },
   
-  // Resonance Compass configuration
-  resonanceCompassConfig: {
-    containerSelector: '#resonanceCompass',
-    width: 700,
-    height: 700,
-    margin: { top: 20, right: 20, bottom: 20, left: 20 },
-    zodiacRingWidth: 25,
-    zodiacSigns: [
-      { name: 'Aries', symbol: '♈', color: '#ff3b30' },
-      { name: 'Taurus', symbol: '♉', color: '#4cd964' },
-      { name: 'Gemini', symbol: '♊', color: '#ffcc00' },
-      { name: 'Cancer', symbol: '♋', color: '#4cd964' },
-      { name: 'Leo', symbol: '♌', color: '#ff9500' },
-      { name: 'Virgo', symbol: '♍', color: '#4cd964' },
-      { name: 'Libra', symbol: '♎', color: '#ffcc00' },
-      { name: 'Scorpio', symbol: '♏', color: '#ff3b30' },
-      { name: 'Sagittarius', symbol: '♐', color: '#ff9500' },
-      { name: 'Capricorn', symbol: '♑', color: '#4cd964' },
-      { name: 'Aquarius', symbol: '♒', color: '#34aadc' },
-      { name: 'Pisces', symbol: '♓', color: '#34aadc' }
-    ]
-  },
-  
-  // Vortex Visualization configuration
-  vortexVisualizationConfig: {
-    containerSelector: '#vortexVisualization',
-    particleCount: 10000,
-    particleSize: 0.1,
+  // Resonance compass configuration
+  resonanceCompass: {
+    radius: 180,
+    centerRadius: 40,
+    ringWidth: 10,
+    aspectLineWidth: 2,
+    planetRadius: 8,
     rotationSpeed: 0.001,
-    cameraDistance: 250,
-    fieldOfView: 60,
-    particleColors: [
-      '#4cd964', // Green
-      '#34aadc', // Blue
-      '#5856d6', // Indigo
-      '#ff9500', // Orange
-      '#ffcc00', // Yellow
-      '#ff3b30'  // Red
-    ]
+    showLabels: true,
+    animationDuration: 2000
   },
   
-  // Pattern Recognition configuration
-  patternRecognitionConfig: {
-    patterns: [
-      {
-        id: 'ALIGNMENT',
-        name: 'ALIGNMENT',
-        threshold: 0.85,
-        description: 'A period of harmonic resonance across multiple planetary vortices, creating ideal conditions for conscious navigation of the resonance field. This pattern facilitates clear perception and intention setting.'
-      },
-      {
-        id: 'TRANSITION',
-        name: 'TRANSITION',
-        threshold: 0.65,
-        description: 'The current phase transition indicates a significant shift in the resonance field as Mars forms a trine aspect with Jupiter, activating a harmonic cascade effect. This creates a window of opportunity for conscious navigation of transformative patterns.'
-      },
-      {
-        id: 'AMPLIFICATION',
-        name: 'AMPLIFICATION',
+  // Vortex visualization configuration
+  vortexVisualization: {
+    width: 800,
+    height: 600,
+    rotationSpeed: 0.001,
+    particleCount: 5000,
+    particleSize: 2,
+    particleSpread: 300,
+    spiralTightness: 10,
+    colorIntensity: 1.5,
+    cameraDistance: 500,
+    autoRotate: true
+  },
+  
+  // Pattern recognition configuration
+  patternRecognition: {
+    phaseCoherenceThreshold: 0.62,
+    fieldStrengthMax: 10.0,
+    patternMatchThreshold: 0.8,
+    patterns: {
+      harmonicCascade: {
+        name: 'Harmonic Cascade',
         threshold: 0.75,
-        description: 'A powerful amplification of specific resonance patterns is occurring, intensifying both challenges and opportunities. Key planetary relationships are magnifying certain archetypal themes within the collective field.'
+        description: 'Multi-scale resonance chains creating nested synchronization'
       },
-      {
-        id: 'DISSOLUTION',
-        name: 'DISSOLUTION',
-        threshold: 0.55,
-        description: 'Old patterns are dissolving as Neptune's influence increases, creating temporary uncertainty but making space for new possibilities. This is an excellent time for releasing outdated structures and attachments.'
+      vortexCore: {
+        name: 'Vortex Core',
+        threshold: 0.8,
+        description: 'Stable centers of rotational energy with high coherence'
       },
-      {
-        id: 'EMERGENCE',
-        name: 'EMERGENCE',
-        threshold: 0.70,
-        description: 'New resonance patterns are emerging from the field, bringing fresh potentials and unexpected developments. This is an excellent time for innovation and exploring new directions.'
+      phaseWave: {
+        name: 'Phase Wave',
+        threshold: 0.7,
+        description: 'Propagating phase relationships across the field'
       },
-      {
-        id: 'STABILIZATION',
-        name: 'STABILIZATION',
-        threshold: 0.80,
-        description: 'The resonance field is reaching a point of equilibrium, with stable resonance patterns that support long-term projects and sustained focus. This pattern facilitates grounding and practical implementation.'
+      resonanceNode: {
+        name: 'Resonance Node',
+        threshold: 0.85,
+        description: 'Points of maximum coupling between planetary vortices'
+      },
+      fractalBoundary: {
+        name: 'Fractal Boundary',
+        threshold: 0.65,
+        description: 'Scale transition markers in the resonance field'
+      },
+      attractorBasin: {
+        name: 'Attractor Basin',
+        threshold: 0.72,
+        description: 'Regions of pattern stability and coherence'
+      },
+      bifurcationPoint: {
+        name: 'Bifurcation Point',
+        threshold: 0.68,
+        description: 'Pattern splitting locations indicating transformation'
+      },
+      interferencePattern: {
+        name: 'Interference Pattern',
+        threshold: 0.67,
+        description: 'Complex interactions between multiple vortex fields'
       }
-    ]
+    }
   },
   
-  // Fractal Dimension configuration
-  fractalDimensionConfig: {
+  // Fractal dimension configuration
+  fractalDimension: {
     minValue: 1.0,
     maxValue: 3.0,
-    defaultValue: 2.38,
-    significantDigits: 2
+    defaultScale: -3, // 10^-3 scale
+    boxCounts: [4, 8, 16, 32, 64, 128]
   },
   
-  // Mock Data for Testing
+  // Mock data for testing
   mockData: {
-    planetaryPositions: [
-      { id: 'sun', longitude: 0, latitude: 0, distance: 1 },
-      { id: 'moon', longitude: 45, latitude: 1, distance: 0.002 },
-      { id: 'mercury', longitude: 15, latitude: 2, distance: 0.4 },
-      { id: 'venus', longitude: 75, latitude: -1, distance: 0.7 },
-      { id: 'mars', longitude: 120, latitude: 0.5, distance: 1.5 },
-      { id: 'jupiter', longitude: 240, latitude: -0.5, distance: 5.2 },
-      { id: 'saturn', longitude: 270, latitude: 0.2, distance: 9.5 },
-      { id: 'uranus', longitude: 300, latitude: 0, distance: 19.2 },
-      { id: 'neptune', longitude: 330, latitude: 0.1, distance: 30.1 },
-      { id: 'pluto', longitude: 290, latitude: 17, distance: 39.5 }
-    ],
+    // Planetary positions (longitude in degrees)
+    planetaryPositions: {
+      timestamp: new Date().toISOString(),
+      positions: {
+        sun: { longitude: 35.7, latitude: 0.0, distance: 1.0 },
+        moon: { longitude: 128.3, latitude: 1.2, distance: 0.0026 },
+        mercury: { longitude: 65.2, latitude: -2.1, distance: 0.7 },
+        venus: { longitude: 98.4, latitude: 1.5, distance: 0.9 },
+        mars: { longitude: 182.6, latitude: -0.8, distance: 1.5 },
+        jupiter: { longitude: 215.8, latitude: 0.3, distance: 5.2 },
+        saturn: { longitude: 305.4, latitude: -0.1, distance: 9.5 },
+        uranus: { longitude: 25.1, latitude: 0.0, distance: 19.2 },
+        neptune: { longitude: 348.7, latitude: 0.2, distance: 30.1 },
+        pluto: { longitude: 277.3, latitude: 17.5, distance: 39.5 }
+      }
+    },
     
-    aspects: [
-      { body1: 'mars', body2: 'jupiter', type: 'trine', angle: 120, orb: 2.3 },
-      { body1: 'venus', body2: 'saturn', type: 'square', angle: 90, orb: 3.8 },
-      { body1: 'sun', body2: 'mercury', type: 'conjunction', angle: 0, orb: 7.5 },
-      { body1: 'moon', body2: 'venus', type: 'sextile', angle: 60, orb: 2.1 },
-      { body1: 'jupiter', body2: 'pluto', type: 'square', angle: 90, orb: 5.2 }
-    ],
+    // Aspects between planets
+    aspects: {
+      timestamp: new Date().toISOString(),
+      aspectList: [
+        { planet1: 'sun', planet2: 'uranus', aspect: 'conjunction', orb: 3.7 },
+        { planet1: 'sun', planet2: 'pluto', aspect: 'square', orb: 2.1 },
+        { planet1: 'moon', planet2: 'venus', aspect: 'trine', orb: 1.9 },
+        { planet1: 'jupiter', planet2: 'saturn', aspect: 'square', orb: 0.8 },
+        { planet1: 'mars', planet2: 'jupiter', aspect: 'opposition', orb: 2.4 },
+        { planet1: 'venus', planet2: 'mercury', aspect: 'sextile', orb: 3.2 }
+      ]
+    },
     
-    resonancePattern: {
-      id: 'TRANSITION',
-      strength: 0.78,
-      phaseCoherence: 0.67,
-      fractalDimension: 2.38,
-      description: 'The current phase transition indicates a significant shift in the resonance field as Mars forms a trine aspect with Jupiter, activating a harmonic cascade effect. This creates a window of opportunity for conscious navigation of transformative patterns. Venus approaching a square with Saturn suggests potential restructuring of value systems, while Mercury's fast-moving position near the Sun amplifies information transfer across all resonance domains.'
+    // Resonance patterns
+    resonancePatterns: {
+      timestamp: new Date().toISOString(),
+      currentPattern: {
+        name: 'Harmonic Cascade',
+        intensity: 0.78,
+        activation: 0.82,
+        dominantPlanets: ['jupiter', 'saturn', 'uranus'],
+        secondaryPlanets: ['sun', 'venus']
+      },
+      secondaryPatterns: [
+        { name: 'Resonance Node', intensity: 0.65 },
+        { name: 'Phase Wave', intensity: 0.42 }
+      ],
+      fieldStrength: 6.82,
+      fieldType: 'Resonance Units'
+    },
+    
+    // Phase synchronization
+    phaseSynchronization: {
+      timestamp: new Date().toISOString(),
+      coherence: 0.67,
+      coherenceTrend: 0.03,
+      synchronizedPairs: [
+        { planet1: 'jupiter', planet2: 'saturn', strength: 0.78 },
+        { planet1: 'sun', planet2: 'uranus', strength: 0.65 },
+        { planet1: 'venus', planet2: 'mars', strength: 0.42 }
+      ],
+      couplingMatrix: [
+        [1.0, 0.2, 0.15, 0.1, 0.25, 0.3, 0.35, 0.1, 0.05, 0.02],
+        [0.2, 1.0, 0.3, 0.4, 0.25, 0.1, 0.15, 0.05, 0.1, 0.1],
+        [0.15, 0.3, 1.0, 0.5, 0.2, 0.1, 0.05, 0.1, 0.05, 0.0],
+        [0.1, 0.4, 0.5, 1.0, 0.35, 0.2, 0.1, 0.05, 0.1, 0.05],
+        [0.25, 0.25, 0.2, 0.35, 1.0, 0.45, 0.2, 0.1, 0.05, 0.1],
+        [0.3, 0.1, 0.1, 0.2, 0.45, 1.0, 0.6, 0.2, 0.15, 0.1],
+        [0.35, 0.15, 0.05, 0.1, 0.2, 0.6, 1.0, 0.3, 0.2, 0.15],
+        [0.1, 0.05, 0.1, 0.05, 0.1, 0.2, 0.3, 1.0, 0.4, 0.2],
+        [0.05, 0.1, 0.05, 0.1, 0.05, 0.15, 0.2, 0.4, 1.0, 0.3],
+        [0.02, 0.1, 0.0, 0.05, 0.1, 0.1, 0.15, 0.2, 0.3, 1.0]
+      ]
+    },
+    
+    // Fractal dimension
+    fractalDimension: {
+      timestamp: new Date().toISOString(),
+      value: 2.38,
+      scale: -3,
+      confidence: 0.95,
+      boxCounts: [12, 42, 164, 612, 2418, 9654]
+    },
+    
+    // AI interpretation
+    aiInterpretation: {
+      timestamp: new Date().toISOString(),
+      interpretation: "The current Harmonic Cascade pattern indicates a strong alignment between Jupiter and Saturn, creating resonance fields that enhance collective synchronization. This pattern facilitates intuitive connections across different scales of organization, from personal to societal. The high phase coherence suggests a period of stability and integration of previously fragmented patterns. The fractal dimension of 2.38 indicates a complex but navigable resonance field, with multiple potential pathways for consciousness evolution.",
+      model: "gpt-4o",
+      usage: { prompt_tokens: 650, completion_tokens: 124, total_tokens: 774 }
     }
   }
 };
