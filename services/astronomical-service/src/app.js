@@ -1,133 +1,96 @@
 /**
- * Astronomical Service - Main Application
- * Express server for the FRC 4D Resonance Tool
+ * FRC Astronomical Service
+ * Main application file
  */
 
-// Load environment variables
 require('dotenv').config();
-
-// Import dependencies
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const compression = require('compression');
 const morgan = require('morgan');
-const rateLimit = require('express-rate-limit');
-
-// Import utilities
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('../swagger.json');
 const logger = require('./utils/logger');
+const rateLimiter = require('./middleware/rateLimiter');
+const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
+const routes = require('./routes');
 
-// Create Express application
+// Create Express app
 const app = express();
 
-// Configure security middleware
+// Trust proxy for proper client IP detection when behind a reverse proxy
+app.set('trust proxy', 1);
+
+// Parse JSON request bodies
+app.use(express.json({ limit: '1mb' }));
+
+// Parse URL-encoded request bodies
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+
+// Compress responses
+app.use(compression());
+
+// Secure HTTP headers
 app.use(helmet());
 
-// Configure CORS
-const allowedOrigins = process.env.ALLOWED_ORIGINS 
-  ? process.env.ALLOWED_ORIGINS.split(',') 
-  : ['http://localhost:3000'];
-
+// CORS configuration
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || '*').split(',');
 app.use(cors({
-  origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps, curl, postman)
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     
-    if (allowedOrigins.includes(origin)) {
+    // Check if the origin is allowed
+    if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-API-Key'],
+  credentials: true,
+  maxAge: 86400 // 24 hours
 }));
 
-// Configure request parsing
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Request logging
+if (process.env.NODE_ENV !== 'test') {
+  app.use(morgan('combined', { 
+    stream: { 
+      write: message => logger.http(message.trim()) 
+    } 
+  }));
+}
 
-// Configure request logging
-const morganFormat = process.env.NODE_ENV === 'production' ? 'combined' : 'dev';
-app.use(morgan(morganFormat, {
-  stream: {
-    write: (message) => logger.http(message.trim())
-  }
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Rate limiter for API routes
+if (process.env.NODE_ENV !== 'test') {
+  app.use('/api', rateLimiter.standard);
+}
+
+// API documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
+  explorer: true,
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'FRC Astronomical Service API'
 }));
 
-// Configure rate limiting
-const limiter = rateLimit({
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 60 * 1000, // default: 1 minute
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100, // default: 100 requests per minute
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: 'Too many requests, please try again later.',
-  skip: (req) => {
-    // Skip rate limiting for internal requests (if applicable)
-    return req.ip === '127.0.0.1' || req.ip === '::1';
-  }
-});
+// API routes
+app.use('/api', routes);
 
-// Apply rate limiting to all requests
-app.use(limiter);
+// 404 handler for undefined routes
+app.use(notFoundHandler);
 
-// Define routes
-app.get('/', (req, res) => {
-  res.json({
-    name: 'Astronomical Service',
-    version: process.env.SERVICE_VERSION || '0.1.0',
-    status: 'running'
-  });
-});
+// Global error handler
+app.use(errorHandler);
 
-// Import routes
-const planetRoutes = require('./routes/planets');
-const aspectRoutes = require('./routes/aspects');
-const calculationRoutes = require('./routes/calculations');
-const chartRoutes = require('./routes/charts');
-
-// Use routes
-app.use('/planets', planetRoutes);
-app.use('/aspects', aspectRoutes);
-app.use('/calculations', calculationRoutes);
-app.use('/charts', chartRoutes);
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-  // Log the error
-  logger.error('Unhandled error', { 
-    error: err.message, 
-    stack: err.stack,
-    path: req.path,
-    method: req.method
-  });
-  
-  // Return appropriate error response
-  const statusCode = err.statusCode || 500;
-  const message = statusCode === 500 
-    ? 'Internal server error' 
-    : err.message || 'Something went wrong';
-  
-  res.status(statusCode).json({
-    error: {
-      message,
-      status: statusCode,
-      timestamp: new Date().toISOString()
-    }
-  });
-});
-
-// Not found middleware (must be after other routes)
-app.use((req, res) => {
-  logger.warn(`Route not found: ${req.method} ${req.originalUrl}`);
-  
-  res.status(404).json({
-    error: {
-      message: 'Route not found',
-      status: 404,
-      path: req.originalUrl,
-      timestamp: new Date().toISOString()
-    }
-  });
-});
-
-// Export the app for server.js
 module.exports = app;
