@@ -3,18 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fractal Resonance Consortium - Perceiving Multidimensional Patterns</title>
-  <meta name="description" content="Explore the Fractal Resonance Consortium's tools for perceiving and navigating multidimensional resonance patterns across planetary, archetypal and personal domains.">
+  <title>Fractal Resonance Consortium - 4D Resonance Technology</title>
+  <meta name="description" content="Explore the Fractal Resonance Consortium's 4D Resonance Technology - Understanding planetary vortex patterns and resonance fields across multiple dimensions.">
+  
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&family=Quicksand:wght@300;400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
   <link rel="stylesheet" href="styles.css">
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
 </head>
 <body>
-  <div class="overlay"></div>
-  
   <header>
     <div class="logo">
       <img src="assets/logo.svg" alt="FRC Logo">
@@ -22,76 +25,93 @@
     </div>
     <nav>
       <ul>
-        <li><a href="#about">About the Consortium</a></li>
+        <li><a href="#about">About</a></li>
         <li><a href="#research">Research</a></li>
         <li><a href="#tools">Tools</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
     </nav>
   </header>
-  
+
   <main>
     <section class="hero">
-      <h1>Perceive the Universe's Resonance Patterns</h1>
-      <p class="tagline">Explore the fractal structure of consciousness and reality through multidimensional resonance fields</p>
-      
-      <div class="resonance-watch-container">
-        <div class="resonance-info">
-          <div class="current-pattern">
-            <h3>Current Pattern:</h3>
-            <div class="pattern-badge" id="patternBadge">TRANSITION</div>
-          </div>
-          <div class="meta-data">
-            <div class="data-point">
-              <label>Phase Coherence</label>
-              <span id="phaseCoherence">0.67</span>
-            </div>
-            <div class="data-point">
-              <label>Fractal Dimension</label>
-              <span id="fractalDimension">2.38</span>
-            </div>
-            <div class="data-point">
-              <label>Field Strength</label>
-              <span id="fieldStrength">78%</span>
-            </div>
-          </div>
-        </div>
+      <div class="hero-content">
+        <h2>Explore the 4D Resonance Field</h2>
+        <p>Experience the real-time fractal resonance patterns connecting planetary movements to consciousness vortex dynamics.</p>
         
-        <div class="visualization">
-          <div id="resonanceCompass" class="active-vis"></div>
-          <div id="vortexVisualization"></div>
-          <div class="vis-controls">
-            <button class="vis-toggle active" data-target="resonanceCompass">Resonance Compass</button>
-            <button class="vis-toggle" data-target="vortexVisualization">Vortex View</button>
+        <div class="resonance-watch">
+          <div class="resonance-header">
+            <h3 class="resonance-title">Cosmic Resonance Watch</h3>
+            <div class="resonance-controls">
+              <div class="resonance-view-selector">
+                <button id="compass-view-btn" class="active">Resonance Compass</button>
+                <button id="vortex-view-btn">Vortex Visualization</button>
+              </div>
+            </div>
           </div>
-        </div>
-        
-        <div class="pattern-description">
-          <h3>Current Planetary Alignment</h3>
-          <p id="patternDescription">
-            The current phase transition indicates a significant shift in the resonance field as Mars forms a trine aspect with Jupiter, activating a harmonic cascade effect. This creates a window of opportunity for conscious navigation of transformative patterns. Venus approaching a square with Saturn suggests potential restructuring of value systems, while Mercury's fast-moving position near the Sun amplifies information transfer across all resonance domains.
-          </p>
-          <!-- API key configuration button will be added here by JavaScript -->
+          
+          <div class="resonance-metrics">
+            <div class="metric-card">
+              <h4>Current Pattern</h4>
+              <div class="value" id="current-pattern">Harmonic Cascade</div>
+              <div class="sub-value" id="pattern-intensity">Intensity: 78%</div>
+            </div>
+            <div class="metric-card">
+              <h4>Phase Coherence</h4>
+              <div class="value" id="phase-coherence">0.67</div>
+              <div class="sub-value" id="coherence-trend">↑ 0.03</div>
+            </div>
+            <div class="metric-card">
+              <h4>Fractal Dimension</h4>
+              <div class="value" id="fractal-dimension">2.38</div>
+              <div class="sub-value" id="dimension-scale">Scale: 10^-3</div>
+            </div>
+            <div class="metric-card">
+              <h4>Field Strength</h4>
+              <div class="value" id="field-strength">6.82</div>
+              <div class="sub-value" id="field-type">Resonance Units</div>
+            </div>
+          </div>
+          
+          <div class="visualization-container">
+            <div id="resonance-compass"></div>
+            <div id="vortex-visualization" class="hidden"></div>
+          </div>
+          
+          <div class="pattern-interpretation">
+            <h3>Current Resonance Interpretation</h3>
+            <p id="pattern-description">
+              The current <span class="highlight">Harmonic Cascade</span> pattern indicates a strong alignment between 
+              <span class="highlight">Jupiter</span> and <span class="highlight">Saturn</span>, creating resonance 
+              fields that enhance collective synchronization. This pattern facilitates intuitive connections across 
+              different scales of organization, from personal to societal. The high phase coherence suggests a period 
+              of stability and integration of previously fragmented patterns. The fractal dimension of 2.38 indicates 
+              a complex but navigable resonance field, with multiple potential pathways for consciousness evolution.
+            </p>
+          </div>
         </div>
       </div>
     </section>
     
-    <section class="about" id="about">
-      <h2>The Fractal Resonance Consortium</h2>
-      <p>Dedicated to exploring the fractal nature of consciousness and reality through advanced pattern recognition and resonance technology.</p>
-      
-      <div class="about-grid">
-        <div class="about-item">
-          <h3>Our Mission</h3>
-          <p>To develop tools and methodologies that reveal the interconnected, fractal nature of consciousness across multiple dimensions, enabling individuals to navigate complex resonance fields with greater awareness.</p>
-        </div>
-        <div class="about-item">
-          <h3>Our Approach</h3>
-          <p>Combining advanced mathematics, fractal geometry, archetypal psychology, and astronomical cycles, we create technologies that make visible the invisible patterns that connect all aspects of existence.</p>
-        </div>
-        <div class="about-item">
-          <h3>Our Community</h3>
-          <p>FRC brings together scientists, philosophers, mathematicians, artists, and consciousness researchers who share a common vision of exploring reality through the lens of resonance and pattern recognition.</p>
+    <section id="about" class="about-section">
+      <div class="about-container">
+        <h2>About the Consortium</h2>
+        <div class="about-grid">
+          <div class="about-card">
+            <h3>Our Mission</h3>
+            <p>The Fractal Resonance Consortium develops tools and frameworks for understanding the multi-dimensional 
+              relationships between planetary movements, consciousness evolution, and fractal resonance patterns.</p>
+          </div>
+          <div class="about-card">
+            <h3>Our Approach</h3>
+            <p>We combine advanced mathematics, pattern recognition algorithms, and archetypal field analysis to create 
+              practical tools for navigating complex resonance systems across multiple scales.</p>
+          </div>
+          <div class="about-card">
+            <h3>Our Community</h3>
+            <p>Join researchers, practitioners, and explorers investigating the applications of fractal resonance 
+              technology in personal development, social systems, and planetary evolution.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -99,35 +119,40 @@
   
   <footer>
     <div class="footer-content">
-      <div class="footer-section">
-        <h4>Fractal Resonance Consortium</h4>
-        <p>Exploring multidimensional patterns across consciousness since 2020.</p>
+      <div class="footer-column">
+        <div class="footer-logo">
+          <img src="assets/logo.svg" alt="FRC Logo">
+          <h3>FRC</h3>
+        </div>
+        <p>Exploring the mathematics of resonance across dimensions.</p>
       </div>
-      <div class="footer-section">
-        <h4>Connect</h4>
-        <ul class="footer-links">
-          <li><a href="#">Email</a></li>
-          <li><a href="#">Newsletter</a></li>
-          <li><a href="#">Social Media</a></li>
+      <div class="footer-column">
+        <h3>Contact</h3>
+        <ul>
+          <li><a href="mailto:info@fractalresonance.com">info@fractalresonance.com</a></li>
+          <li><a href="#">Twitter</a></li>
+          <li><a href="#">LinkedIn</a></li>
         </ul>
       </div>
-      <div class="footer-section">
-        <h4>Resources</h4>
-        <ul class="footer-links">
+      <div class="footer-column">
+        <h3>Resources</h3>
+        <ul>
+          <li><a href="#">Documentation</a></li>
           <li><a href="#">Research Papers</a></li>
-          <li><a href="#">FRC Tools</a></li>
-          <li><a href="#">Resonance Guide</a></li>
+          <li><a href="#">Visualization Tools</a></li>
         </ul>
       </div>
     </div>
-    <div class="copyright">
+    <div class="footer-bottom">
       <p>&copy; 2025 Fractal Resonance Consortium. All rights reserved.</p>
     </div>
   </footer>
 
+  <!-- Scripts -->
   <script src="js/config.js"></script>
+  <script src="js/envLoader.js"></script>
+  <script src="js/apiKeyManager.js"></script>
   <script src="js/api.js"></script>
-  <script src="js/interpretationService.js"></script>
   <script src="js/resonanceCompass.js"></script>
   <script src="js/vortexVisualization.js"></script>
   <script src="js/app.js"></script>
