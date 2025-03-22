@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4D Vortex Resonance Watch</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Add D3.js for resonance compass visualization -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- Add Three.js for vortex visualization -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">
+                <div class="logo-symbol">⊗</div>
+                <div class="logo-text">
+                    <div class="logo-title">4D Vortex</div>
+                    <div class="logo-subtitle">Resonance Watch</div>
+                </div>
+            </div>
+            <div class="datetime">
+                <div id="current-date">Loading...</div>
+                <div id="current-time">00:00:00</div>
+            </div>
+        </header>
+        
+        <div class="resonance-status">
+            <div class="pattern-indicator">
+                <div id="pattern-name">[LOADING]</div>
+                <div id="pattern-description">Initializing resonance field...</div>
+            </div>
+            <div class="resonance-metrics">
+                <div class="metric">
+                    <div class="metric-label">Phase Coherence</div>
+                    <div class="metric-value" id="phase-coherence">0.00</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Fractal Dimension</div>
+                    <div class="metric-value" id="fractal-dimension">0.00</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Field Strength</div>
+                    <div class="metric-value" id="field-strength">0.00</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="visualization-container">
+            <!-- Mode selector -->
+            <div class="mode-selector">
+                <button class="mode-btn active" data-mode="resonance-compass">Resonance Compass</button>
+                <button class="mode-btn" data-mode="fractal-depth">Vortex Visualization</button>
+                <!-- More modes can be added here -->
+            </div>
+            
+            <!-- Visualization area -->
+            <div class="visualization-area">
+                <div id="resonance-compass" class="visualization-component"></div>
+                <div id="vortex-visualization" class="visualization-component" style="display: none;"></div>
+                <!-- More visualization components can be added here -->
+            </div>
+        </div>
+        
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <h3>Active Aspects</h3>
+                <div class="planet-aspects">
+                    <!-- Aspect items will be populated dynamically -->
+                    <div class="loading">Loading aspects...</div>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <h3>Current Phase</h3>
+                <div class="phase-info">
+                    <p>The current resonance field is characterized by the active pattern displayed above. 
+                    This represents the predominant energy flow in the collective field.</p>
+                    
+                    <p>Updated: <span id="last-updated">Never</span></p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <div class="copyright">© 2023 Fractal Resonance Consortium</div>
+            <div class="version">4D Vortex Watch v1.0.0</div>
+        </footer>
+    </div>
+    
+    <!-- Load configuration and scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/resonanceCompass.js"></script>
+    <script src="js/vortexVisualization.js"></script>
+    <script src="js/app.js"></script>
+    
+    <script>
+        // Initialize API service
+        const apiService = new ApiService();
+        
+        // Initialize visualizations
+        window.addEventListener('DOMContentLoaded', () => {
+            // Initialize the resonance compass
+            window.resonanceCompass = new ResonanceCompass('resonance-compass');
+            
+            // Initialize the vortex visualization
+            window.vortexVisualization = new VortexVisualization('vortex-visualization');
+        });
+    </script>
+</body>
+</html>
