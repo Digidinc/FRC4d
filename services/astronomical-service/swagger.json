@@ -1,0 +1,693 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "FRC Astronomical Service API",
+    "description": "API for astrological and resonance calculations supporting the 4D Vortex Resonance Tool",
+    "version": "0.1.0",
+    "contact": {
+      "name": "FRC",
+      "url": "https://fractalresonance.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.fractalresonance.com/api",
+      "description": "Production Server"
+    },
+    {
+      "url": "http://localhost:3000/api",
+      "description": "Development Server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "planets",
+      "description": "Planetary position operations"
+    },
+    {
+      "name": "aspects",
+      "description": "Planetary aspect operations"
+    },
+    {
+      "name": "calculations",
+      "description": "Resonance and fractal calculations"
+    },
+    {
+      "name": "charts",
+      "description": "Natal and transit chart operations"
+    }
+  ],
+  "paths": {
+    "/planets/positions": {
+      "get": {
+        "tags": ["planets"],
+        "summary": "Get current planetary positions",
+        "description": "Returns the current positions of all planets",
+        "operationId": "getCurrentPlanetaryPositions",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanetaryPositionsResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/planets/positions/{date}": {
+      "get": {
+        "tags": ["planets"],
+        "summary": "Get planetary positions for a specific date",
+        "description": "Returns the positions of all planets at the specified date and time",
+        "operationId": "getPlanetaryPositionsForDate",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "The date and time in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanetaryPositionsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/aspects/current": {
+      "get": {
+        "tags": ["aspects"],
+        "summary": "Get current planetary aspects",
+        "description": "Returns the current aspects between all planets",
+        "operationId": "getCurrentAspects",
+        "parameters": [
+          {
+            "name": "min_strength",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "format": "float",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "description": "Minimum aspect strength to include (0-1)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AspectsResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/calculations/phase-sync": {
+      "post": {
+        "tags": ["calculations"],
+        "summary": "Calculate phase synchronization",
+        "description": "Calculates phase synchronization using the FRC equation",
+        "operationId": "calculatePhaseSync",
+        "requestBody": {
+          "description": "Phase synchronization parameters",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PhaseSyncRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhaseSyncResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/calculations/resonance": {
+      "post": {
+        "tags": ["calculations"],
+        "summary": "Calculate resonance strength",
+        "description": "Calculates the resonance strength between two patterns",
+        "operationId": "calculateResonanceStrength",
+        "requestBody": {
+          "description": "Patterns to calculate resonance between",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResonanceRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResonanceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/charts/natal-chart": {
+      "post": {
+        "tags": ["charts"],
+        "summary": "Generate a natal chart",
+        "description": "Generates a natal chart based on date, time, and location",
+        "operationId": "generateNatalChart",
+        "requestBody": {
+          "description": "Natal chart parameters",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NatalChartRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Chart created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NatalChartResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Planet": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "sun"
+          },
+          "name": {
+            "type": "string",
+            "example": "Sun"
+          },
+          "longitude": {
+            "type": "number",
+            "format": "float",
+            "example": 123.45
+          },
+          "latitude": {
+            "type": "number",
+            "format": "float",
+            "example": 0.02
+          },
+          "speed": {
+            "type": "number",
+            "format": "float",
+            "example": 1.02
+          },
+          "sign": {
+            "type": "string",
+            "example": "Leo"
+          },
+          "sign_longitude": {
+            "type": "number",
+            "format": "float",
+            "example": 3.45
+          },
+          "house": {
+            "type": "number",
+            "format": "integer",
+            "example": 10
+          }
+        }
+      },
+      "Aspect": {
+        "type": "object",
+        "properties": {
+          "planet1": {
+            "type": "string",
+            "example": "sun"
+          },
+          "planet2": {
+            "type": "string",
+            "example": "moon"
+          },
+          "aspect_type": {
+            "type": "string",
+            "example": "conjunction"
+          },
+          "angle": {
+            "type": "number",
+            "format": "float",
+            "example": 0.5
+          },
+          "orb": {
+            "type": "number",
+            "format": "float",
+            "example": 0.5
+          },
+          "strength": {
+            "type": "number",
+            "format": "float",
+            "example": 0.95
+          },
+          "is_applying": {
+            "type": "boolean",
+            "example": true
+          },
+          "is_exact": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "PlanetaryPositionsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "cached": {
+            "type": "boolean",
+            "example": false
+          },
+          "datetime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "positions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Planet"
+            }
+          }
+        }
+      },
+      "AspectsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "cached": {
+            "type": "boolean",
+            "example": false
+          },
+          "datetime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "aspects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Aspect"
+            }
+          }
+        }
+      },
+      "PhaseSyncRequest": {
+        "type": "object",
+        "required": ["theta_i", "omega_i", "couplings"],
+        "properties": {
+          "theta_i": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "float"
+            },
+            "example": [0.1, 1.2, 2.3]
+          },
+          "omega_i": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "float"
+            },
+            "example": [0.01, 0.02, 0.03]
+          },
+          "couplings": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "format": "float"
+              }
+            },
+            "example": [
+              [0, 0.1, 0.2],
+              [0.1, 0, 0.3],
+              [0.2, 0.3, 0]
+            ]
+          }
+        }
+      },
+      "PhaseSyncResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "cached": {
+            "type": "boolean",
+            "example": false
+          },
+          "result": {
+            "type": "object",
+            "properties": {
+              "dtheta_dt": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "format": "float"
+                },
+                "example": [0.023, 0.034, 0.045]
+              },
+              "synchronization_index": {
+                "type": "number",
+                "format": "float",
+                "example": 0.85
+              }
+            }
+          }
+        }
+      },
+      "ResonanceRequest": {
+        "type": "object",
+        "required": ["patternA", "patternB"],
+        "properties": {
+          "patternA": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "float"
+            },
+            "example": [0.1, 0.2, 0.3, 0.4, 0.5]
+          },
+          "patternB": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "float"
+            },
+            "example": [0.5, 0.4, 0.3, 0.2, 0.1]
+          }
+        }
+      },
+      "ResonanceResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "cached": {
+            "type": "boolean",
+            "example": false
+          },
+          "result": {
+            "type": "object",
+            "properties": {
+              "resonanceStrength": {
+                "type": "number",
+                "format": "float",
+                "example": 0.75
+              }
+            }
+          }
+        }
+      },
+      "NatalChartRequest": {
+        "type": "object",
+        "required": ["datetime", "latitude", "longitude"],
+        "properties": {
+          "datetime": {
+            "type": "string",
+            "format": "date-time",
+            "example": "1990-01-01T12:00:00Z"
+          },
+          "latitude": {
+            "type": "number",
+            "format": "float",
+            "example": 40.712776
+          },
+          "longitude": {
+            "type": "number",
+            "format": "float",
+            "example": -74.005974
+          },
+          "location_name": {
+            "type": "string",
+            "example": "New York, NY"
+          }
+        }
+      },
+      "NatalChartResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "cached": {
+            "type": "boolean",
+            "example": false
+          },
+          "chart": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "example": "123e4567-e89b-12d3-a456-426614174000"
+              },
+              "datetime": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "latitude": {
+                "type": "number",
+                "format": "float"
+              },
+              "longitude": {
+                "type": "number",
+                "format": "float"
+              },
+              "location_name": {
+                "type": "string"
+              },
+              "planets": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Planet"
+                }
+              },
+              "houses": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "house_number": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "cusp_longitude": {
+                      "type": "number",
+                      "format": "float",
+                      "example": 45.5
+                    },
+                    "sign": {
+                      "type": "string",
+                      "example": "Taurus"
+                    }
+                  }
+                }
+              },
+              "aspects": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Aspect"
+                }
+              },
+              "resonance_pattern": {
+                "type": "string",
+                "example": "ALIGNMENT"
+              },
+              "fractal_dimension": {
+                "type": "number",
+                "format": "float",
+                "example": 1.75
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Error message description"
+              },
+              "code": {
+                "type": "string",
+                "example": "INTERNAL_ERROR"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
