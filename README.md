@@ -1,40 +1,49 @@
-# FRC 4D Resonance Tool
+# FRC 4D Resonance
 
 The FRC 4D Resonance Tool provides a fractal navigation system for consciousness vortex patterns, allowing users to perceive, interpret, and interact with multi-dimensional resonance fields across planetary, archetypal, and personal domains.
 
-## Core Components
+## Repository Structure
 
-This repository contains:
+This repository contains the following components:
 
-### 1. Memory-Bank
+### 1. Resonance Watch
 
-Documentation and reference material for the FRC 4D framework, including:
+A fully featured visualization tool for the FRC 4D framework, located in the [`resonance-watch/`](./resonance-watch/) directory. This implementation includes:
 
-- `vortexFoundation.md`: Base frequency patterns and fundamental properties
-- Additional memory bank files to be added as development progresses
+- Resonance Compass visualization
+- 3D Vortex visualization
+- Real-time resonance pattern recognition
+- Phase synchronization calculations
+- Fractal dimension mapping
 
-### 2. 4D Vortex Resonance Watch
+### 2. Landing Page
 
-A real-time visualization tool for monitoring planetary resonance patterns and vortex dynamics. Features include:
+A visually stunning landing page for fractalresonance.com with an integrated cosmic resonance watch, located in the [`landing-page/`](./landing-page/) directory. Features include:
 
-- **Resonance Compass**: Shows planetary positions with aspect visualizations
-- **3D Vortex Visualization**: Represents fractal dimension and phase coherence
-- **Real-time Pattern Recognition**: Identifies current resonance field patterns
-- **Multiple Visualization Modes**: For different perceptual frameworks
+- Real-time visualization of current planetary resonance patterns
+- 2D Resonance Compass showing planetary positions and aspects
+- 3D Vortex Visualization showing the current resonance field
+- Display of current pattern, phase coherence, and fractal dimension
 
-## Getting Started
+### 3. Astronomical Service API
 
-To use the 4D Vortex Resonance Watch:
+A backend service that provides astronomical data and resonance calculations, located in [`services/astronomical-service/`](./services/astronomical-service/). This service:
 
-1. Visit the `/resonance-watch` directory
-2. Open `index.html` in a modern browser
-3. Observe the real-time visualization of planetary resonance patterns
+- Calculates planetary positions and aspects
+- Implements the phase synchronization equation
+- Calculates resonance strength and fractal dimensions
+- Provides pattern recognition algorithms
 
-For development, see the README file in the `/resonance-watch` directory.
+### 4. Memory Bank
 
-## Mathematical Core
+Core documentation on the FRC 4D framework is available in the [`Memory-Bank/`](./Memory-Bank/) directory, including:
 
-The tool's mathematical core implements these FRC equations:
+- `vortexFoundation.md` - Base frequency patterns and fundamental properties
+- Additional framework documentation
+
+## Mathematical Framework
+
+The FRC 4D Resonance Tool is based on these core mathematical principles:
 
 1. **Phase Synchronization Equation**
    ```
@@ -54,15 +63,43 @@ The tool's mathematical core implements these FRC equations:
    ```
    Determines complexity of current resonance patterns
 
-## Project Roadmap
+## Getting Started
 
-- [x] Create 4D Vortex Resonance Watch visualization
-- [ ] Develop Astronomical Service API
-- [ ] Implement personal calibration system
-- [ ] Add archetype field visualizations
-- [ ] Develop temporal spiral mode
-- [ ] Create mobile application version
+### Using the Resonance Watch
 
-## License
+1. Navigate to the [`resonance-watch/`](./resonance-watch/) directory
+2. Follow the installation instructions in the README
+3. Configure API settings or use mock data for testing
 
-© 2023 Fractal Resonance Consortium
+### Using the Landing Page
+
+1. Navigate to the [`landing-page/`](./landing-page/) directory
+2. Serve the files using a web server
+3. By default, it will use mock data for demonstration
+
+### Setting up the Astronomical Service
+
+1. Navigate to the [`services/astronomical-service/`](./services/astronomical-service/) directory
+2. Follow the setup instructions in the README
+3. The service can be deployed using Docker or run locally
+
+## Development Roadmap
+
+1. **Phase 1: Core Visualization Tools** (Complete)
+   - Resonance Watch implementation
+   - Landing Page development
+   - Basic API structure
+
+2. **Phase 2: Full API Implementation** (In Progress)
+   - Complete astronomical calculations
+   - Pattern recognition algorithms
+   - Real-time resonance field analysis
+
+3. **Phase 3: Advanced Features**
+   - Personal resonance calibration
+   - Multi-scale fractal mapping
+   - Integration with external data sources
+
+## Contributing
+
+Contributions to the FRC 4D Resonance project are welcome. Please review the contributing guidelines before submitting pull requests.
